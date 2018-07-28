@@ -1,0 +1,64 @@
+{% extends 'layouts/default.njk' %}
+
+{% block body %}
+  <div class="wrapper">
+    {% include 'partials/header.njk' %}
+
+    <section id="main">
+      <div class="container">
+        <header>
+          <h2>{{project.name}}</h2>
+          <div class="addon">
+            <form method="POST" action="/app/projects/{{project.id}}?_method=DELETE">
+              <button type="submit" class="btn btn-danger">Excluir projeto</button>
+            </form>
+          </div>
+        </header>
+
+        <section id="content">
+          <nav>
+            <div class="sessions">
+              {% for section in sections %}
+                <a href="/app/projects/{{project.id}}/section/{{section.id}}" class="{% if section.id == activeSection %}active{% endif %}">{{section.name}}</a>
+              {% endfor %}
+            </div>
+
+            <form>
+              <input type="text" name="name" id="sectionName" placeholder="Nova seção">
+              <a data-modal-open="#add-section" class="btn"><img style="margin-top: 12px;" src="/img/plus.svg"></a>
+            </form>
+          </nav>
+
+          {% if activeSection !== null %}
+
+            <article>
+              <div class="project-header">
+                <h1>{{section.name}}</h1>
+                <form action="/app/projects/{{project.id}}/section/{{activeSection}}/destroy?_method=DELETE" method="POST">
+                  <button type="submit">Remover seção</button>
+                </form>
+              </div>
+              <div class="content">{{ section.formattedContent | safe }}</div>
+            </article>
+
+          {% endif %}
+
+        </section>
+      </div>
+
+      <div class="modal" id="add-section">
+        <form class="modal-content" method="POST" action="/app/projects/{{ project.id }}/section/create">
+          <input type="text" name="name" placeholder="Título da sessão" id="sectionNameModal">
+
+          <div class="content-container">
+            <textarea name="content" class="mde" id="modalContent" placeholder="Conteúdo da sessão"></textarea>
+          </div>
+
+          <button type="submit">SALVAR SESSÃO</button>
+          <a href="#" data-modal-close="#add-section">CANCELAR</a>
+        </form>
+      </div>
+
+    </section>
+  </div>
+{% endblock %}
